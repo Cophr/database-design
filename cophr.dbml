@@ -15,6 +15,13 @@ Table users {
   note: "使用者基本資料"
 }
 
+Table places {
+  id int [pk, increment]
+  title varchar [not null, note: "地點名稱"]
+  address text [not null, note: "活動地址"]
+  note: "活動地點"
+}
+
 
 
 
@@ -46,12 +53,43 @@ Table event_days {
   place int [not null, ref: > places.id, note: "活動地點"]
 }
 
-Table places {
+
+
+
+
+// Cosplay related 
+Table works {
   id int [pk, increment]
-  title varchar [not null, note: "地點名稱"]
-  address text [not null, note: "活動地址"]
-  note: "活動地點"
+  title varchar [not null, note: "作品標題"]
+  description text [null, note: "作品簡介, markdown"]
+  link text [null, note: "相關連結"]
+  note: "Cosplay 的相關作品"
 }
+
+Ref work_images: works.id <> images.id
+Ref character_work: works.id <> characters.id
+
+Table characters {
+  id int [pk, increment]
+  title varchar [not null, note: "角色名"]
+  description text [null, note: "角色簡介, markdown"]
+  link text [null, note: "相關連結"]
+  note: "Cosplay 的角色"
+}
+
+Ref character_images: characters.id <> images.id
+Ref costume_character: characters.id <> costumes.id
+
+Table costumes {
+  id int [pk, increment]
+  title varchar [not null, note: "時裝標題"]
+  description text [null, note: "時裝簡介, markdown"]
+  link text [null, note: "相關連結"]
+  note: "時裝"
+}
+
+Ref costume_images: costumes.id <> images.id
+
 
 
 
