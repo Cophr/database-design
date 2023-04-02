@@ -53,6 +53,20 @@ Table event_days {
   place int [not null, ref: > places.id, note: "活動地點"]
 }
 
+Table event_cosplayer_costume {
+  id int [pk, increment]
+  event_day int [not null, ref: > event_days.id]
+  user int [not null, ref: > users.id]
+  character int [not null, ref: > characters.id]
+  costume int [not null, ref: > costumes.id]
+  comment varchar [null, note: "補充說明"]
+
+  indexes {
+     (event_day, user, character, costume) [unique]
+  }
+  note: "場次中會出現的 Cosplayer 跟其時裝"
+}
+
 
 
 
