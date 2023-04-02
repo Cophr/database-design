@@ -67,6 +67,18 @@ Table event_cosplayer_costume {
   note: "場次中會出現的 Cosplayer 跟其時裝"
 }
 
+Table event_photographers {
+  id int [pk, increment]
+  event_day int [not null, ref: > event_days.id]
+  user int [not null, ref: > users.id]
+  comment varchar [null, note: "補充說明"]
+
+  indexes {
+     (user, event_day) [unique]
+  }
+  note: "場次中會出現的攝影師"
+}
+
 
 
 
