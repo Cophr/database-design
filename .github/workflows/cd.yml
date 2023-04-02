@@ -1,0 +1,24 @@
+name: Continuous Deployment
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "cophr.dbml"
+
+jobs:
+  build:
+    name: Build and Deploy Docs to dbdocs.io
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install dbdocs
+        run: sudo npm install -g dbdocs
+
+      - name: Update dbdocs project
+        env:
+          DBDOCS_TOKEN: ${{ secrets.DBDOCS_TOKEN }}
+        run: dbdocs build ./cophr.dbml
