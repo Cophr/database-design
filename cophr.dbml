@@ -14,3 +14,52 @@ Table users {
   created_at timestamp [not null, default: `now()`]
   note: "使用者基本資料"
 }
+
+
+
+
+
+// Event
+Table events {
+  id int [pk, increment]
+  title varchar [not null, note: "活動標題"]
+  type varchar [note: "活動類型, 說明這個活動與 Cosplay 的關係，可能值見 event_type"]
+  description text [null, note: "活動說明, markdown"]
+  link text [not null, note: "活動網站"]
+  note: "Cosplay 場次"
+}
+
+enum event_type {
+  additional [note: "附帶 Cosplay 的活動"]
+  specialized [note: "專門給 Cosplay 的活動"]
+}
+
+Ref event_images: events.id <> images.id
+
+Table event_days {
+  id int [pk, increment]
+  event int [not null, ref: > events.id]
+  description text [null, note: "補充說明, markdown"]
+  event_date date [not null, note: "活動日期"]
+  start_time time [not null, note: "活動開始時間"]
+  end_time time [not null, note: "活動結束時間"]
+  place int [not null, ref: > places.id, note: "活動地點"]
+}
+
+Table places {
+  id int [pk, increment]
+  title varchar [not null, note: "地點名稱"]
+  address text [not null, note: "活動地址"]
+  note: "活動地點"
+}
+
+
+
+
+// Images (use imgur)
+Table images {
+  id int [pk, increment]
+  uploader int [not null, ref: > users.id, note: "上傳者"]
+  imgur_id varchar [not null, note: "Imgur 圖片 ID"]
+  note: "圖片，用於作品、角色的敘述圖（非照片）"
+}
