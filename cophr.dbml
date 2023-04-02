@@ -5,6 +5,13 @@ Project Cophr {
   '''
 }
 
+Table places {
+  id int [pk, increment]
+  title varchar [not null, note: "地點名稱"]
+  address text [not null, note: "活動地址"]
+  note: "活動地點"
+}
+
 Table users {
   id int [pk, increment]
   email varchar(256) [unique, not null, note: "用作登入等用途之信箱"]
@@ -15,11 +22,33 @@ Table users {
   note: "使用者基本資料"
 }
 
-Table places {
+Table user_profile_page {
+  user int [not null, ref: > users.id]
+  theme varchar [not null, note: "主題樣式，主要是個人姓名等顯示排版"]
+  items JSON [not null, note: "個人頁面中元素，JSON 格式原始資料"]
+  note: "使用者個人頁面"
+}
+
+Table social_media_types {
   id int [pk, increment]
-  title varchar [not null, note: "地點名稱"]
-  address text [not null, note: "活動地址"]
-  note: "活動地點"
+  title varchar [unique, not null]
+  auth_provider int [null, ref: > auth_providers.id]
+  note: "社群媒體的種類，e.q. Facebook, 自訂"
+}
+
+Table user_social_media {
+  id int [pk, increment]
+  user int [not null, ref: > users.id]
+  type int [not null, ref: > social_media_types.id]
+
+  title varchar [not null]
+  link text [not null, note: "目標連結"]
+  created_at timestamp [not null, default: `now()`]
+  is_public boolean [not null, default: 1, note: "可見度，0 為隱私，1 為公開"]
+
+  verified_at timestamp [not null]
+  external_id varchar [null, note: "儲存對應到的資料 id，如 Facebook User ID"]
+  note: "使用者的社群媒體（特別有驗證的）"
 }
 
 
