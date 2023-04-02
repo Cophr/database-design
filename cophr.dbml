@@ -1,0 +1,6 @@
+Project Cophr {
+  database_type: 'PostgreSQL'
+  Note: '''
+    # Cophr Database
+  '''
+}
