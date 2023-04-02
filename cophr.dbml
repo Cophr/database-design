@@ -26,6 +26,36 @@ Table places {
 
 
 
+// OAuth Integration
+Table auth_providers {
+  id int [pk, increment]
+  title varchar [not null]
+  client_id varchar [not null, note: "oauth client id"]
+  client_secret varchar [not null, note: "oauth client secret"]
+  scope varchar [null, note: "oauth scope"]
+  redirect_uri varchar [not null, note: "oauth redirect uri"]
+  can_login boolean [not null, note: "是否可以透過這個登入"]
+  note: "驗證服務提供者"
+}
+
+Table oauth_integrations {
+  auth_provider int [not null, ref: > auth_providers.id]
+  user int [not null, ref: > users.id]
+  external_id varchar [not null, note: "3rd party service id"]
+  access_token varchar [not null, note: "user's access token"]
+  refresh_token varchar [not null, note: "user's refresh token"]
+  expire_at timestamp [not null, note: "expire time of token"]
+
+  indexes {
+    (auth_provider, user)[unique]
+  }
+  note: "帳號整合"
+}
+
+
+
+
+
 // Event
 Table events {
   id int [pk, increment]
