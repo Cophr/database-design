@@ -4,3 +4,13 @@ Project Cophr {
     # Cophr Database
   '''
 }
+
+Table users {
+  id int [pk, increment]
+  email varchar(256) [unique, not null, note: "用作登入等用途之信箱"]
+  name varchar [not null, note: "顯示名"]
+  account varchar [unique, not null, note: "帳號"]
+  password varchar [null, note: "密碼"]
+  created_at timestamp [not null, default: `now()`]
+  note: "使用者基本資料"
+}
