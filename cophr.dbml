@@ -120,6 +120,52 @@ Ref costume_images: costumes.id <> images.id
 
 
 
+// Photograph (use flickr)
+Table albums {
+  id int [pk, increment]
+  flickr_id varchar [unique, not null, note: "Flickr 上的 album ID"]
+  event_day int [not null, ref: > event_days.id]
+
+  note: "Flickr 相簿，可以收錄上傳的照片"
+}
+
+Table galleries {
+  id int [pk, increment]
+  flickr_id varchar [unique, not null, note: "Flickr 上的 gallery ID"]
+  event_day int [not null, ref: > event_days.id]
+
+  note: "Flickr 展覽館，可以收錄包括非該帳號上傳的照片"
+}
+
+Table photos {
+  id int [pk, increment]
+  flickr_id varchar [unique, not null, note: "Flickr 上的 photo ID"]
+  user int [not null, ref: > users.id, note: "攝影師/上傳者"]
+  note: "場次中拍到的照片"
+}
+
+Ref photo_event: photos.id <> event_days.id
+Ref photo_cosplayers: photos.id <> event_cosplayer_costume.id
+Ref photo_likes: photos.id <> users.id
+
+Table photo_cosplayer_recommendations {
+  id int [pk, increment]
+  photo int [not null, ref: > photos.id, note: "在哪張照片被 tag"]
+  user int [not null, ref: > users.id, note: "被 Tag 的使用者"]
+  verified boolean [null, note: "是否是本人，null 為尚未驗證"]
+
+  indexes {
+     (photo, user) [unique]
+  }
+  note: "一般使用者在照片上標記人（建議誰可能是相中人）"
+}
+
+Ref photo_cosplayer_recommended_by: photo_cosplayer_recommendations.id <> users.id
+
+
+
+
+
 // Images (use imgur)
 Table images {
   id int [pk, increment]
