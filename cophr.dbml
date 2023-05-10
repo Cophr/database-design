@@ -24,7 +24,7 @@ Table users {
 
 Table user_profile_page {
   user int [not null, ref: > users.id]
-  theme varchar [not null, note: "主題樣式，主要是個人姓名等顯示排版"]
+  settings JSON [not null, note: "個人頁面相關設定，JSON 格式原始資料"]
   items JSON [not null, note: "個人頁面中元素，JSON 格式原始資料"]
   note: "使用者個人頁面"
 }
