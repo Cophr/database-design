@@ -33,20 +33,20 @@ Table social_media_types {
   id int [pk, increment]
   title varchar [unique, not null]
   auth_provider int [null, ref: > auth_providers.id]
-  note: "社群媒體的種類，e.q. Facebook, 自訂"
+  note: "社群媒體的種類，e.q. Facebook, Instagram..."
 }
 
+// 須考量到粉絲專頁等的驗證，登入後還需要取粉絲專頁等資訊來驗證
 Table user_social_media {
   id int [pk, increment]
   user int [not null, ref: > users.id]
   type int [not null, ref: > social_media_types.id]
 
-  title varchar [not null]
-  link text [not null, note: "目標連結"]
+  // 如果驗證了，那麼就強制使用這個連結跳轉，避免使用者自己亂改
+  link text [not null, note: "目標連結，由系統依照該社群媒體組成一個有效連結"]
   created_at timestamp [not null, default: `now()`]
-  is_public boolean [not null, default: 1, note: "可見度，0 為隱私，1 為公開"]
 
-  verified_at timestamp [not null]
+  verified_at timestamp [null, note: "驗證的時間"]
   external_id varchar [null, note: "儲存對應到的資料 id，如 Facebook User ID"]
   note: "使用者的社群媒體（特別有驗證的）"
 }
@@ -143,8 +143,11 @@ Table event_photographers {
 
 
 // Cosplay related 
+// 使用者可以自己新增
+// 可能撈取資料的時候，可以顯示個人新增的，以及達到一定人數關聯的，又或是創造者是使用系統帳號的。
 Table works {
   id int [pk, increment]
+  creator int [not null, ref: > users.id]
   title varchar [not null, note: "作品標題"]
   description text [null, note: "作品簡介, markdown"]
   link text [null, note: "相關連結"]
@@ -156,6 +159,7 @@ Ref character_work: works.id <> characters.id
 
 Table characters {
   id int [pk, increment]
+  creator int [not null, ref: > users.id]
   title varchar [not null, note: "角色名"]
   description text [null, note: "角色簡介, markdown"]
   link text [null, note: "相關連結"]
@@ -167,6 +171,7 @@ Ref costume_character: characters.id <> costumes.id
 
 Table costumes {
   id int [pk, increment]
+  creator int [not null, ref: > users.id]
   title varchar [not null, note: "時裝標題"]
   description text [null, note: "時裝簡介, markdown"]
   link text [null, note: "相關連結"]
@@ -203,7 +208,9 @@ Table photos {
   note: "場次中拍到的照片"
 }
 
+// 保留給當場有兩個活動的可能
 Ref photo_event: photos.id <> event_days.id
+
 Ref photo_cosplayers: photos.id <> event_cosplayer_costume.id
 Ref photo_likes: photos.id <> users.id
 
@@ -211,7 +218,6 @@ Table photo_cosplayer_recommendations {
   id int [pk, increment]
   photo int [not null, ref: > photos.id, note: "在哪張照片被 tag"]
   user int [not null, ref: > users.id, note: "被 Tag 的使用者"]
-  verified boolean [null, note: "是否是本人，null 為尚未驗證"]
 
   indexes {
      (photo, user) [unique]
