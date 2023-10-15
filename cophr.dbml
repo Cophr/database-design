@@ -18,36 +18,36 @@ Table users {
   name varchar [not null, note: "顯示名"]
   account varchar [unique, not null, note: "帳號"]
   password varchar [null, note: "密碼"]
-  created_at timestamp [not null, default: `now()`]
+  createdAt timestamp [not null, default: `now()`]
   note: "使用者基本資料"
 }
 
-Table user_profile_page {
+Table userProfilePage {
   user int [not null, ref: > users.id]
   settings JSON [not null, note: "個人頁面相關設定，JSON 格式原始資料"]
   items JSON [not null, note: "個人頁面中元素，JSON 格式原始資料"]
   note: "使用者個人頁面"
 }
 
-Table social_media_types {
+Table socialMediaTypes {
   id int [pk, increment]
   title varchar [unique, not null]
-  auth_provider int [null, ref: > auth_providers.id]
+  authProvider int [null, ref: > authProviders.id]
   note: "社群媒體的種類，e.q. Facebook, Instagram..."
 }
 
 // 須考量到粉絲專頁等的驗證，登入後還需要取粉絲專頁等資訊來驗證
-Table user_social_media {
+Table userSocialMedia {
   id int [pk, increment]
   user int [not null, ref: > users.id]
-  type int [not null, ref: > social_media_types.id]
+  type int [not null, ref: > socialMediaTypes.id]
 
   // 如果驗證了，那麼就強制使用這個連結跳轉，避免使用者自己亂改
   link text [not null, note: "目標連結，由系統依照該社群媒體組成一個有效連結"]
-  created_at timestamp [not null, default: `now()`]
+  createdAt timestamp [not null, default: `now()`]
 
-  verified_at timestamp [null, note: "驗證的時間"]
-  external_id varchar [null, note: "儲存對應到的資料 id，如 Facebook User ID"]
+  verifiedAt timestamp [null, note: "驗證的時間"]
+  externalId varchar [null, note: "儲存對應到的資料 id，如 Facebook User ID"]
   note: "使用者的社群媒體（特別有驗證的）"
 }
 
@@ -56,27 +56,27 @@ Table user_social_media {
 
 
 // OAuth Integration
-Table auth_providers {
+Table authProviders {
   id int [pk, increment]
   title varchar [not null]
-  client_id varchar [not null, note: "oauth client id"]
-  client_secret varchar [not null, note: "oauth client secret"]
+  clientId varchar [not null, note: "oauth client id"]
+  clientSecret varchar [not null, note: "oauth client secret"]
   scope varchar [null, note: "oauth scope"]
-  redirect_uri varchar [not null, note: "oauth redirect uri"]
-  can_login boolean [not null, note: "是否可以透過這個登入"]
+  redirectUri varchar [not null, note: "oauth redirect uri"]
+  canLogin boolean [not null, note: "是否可以透過這個登入"]
   note: "驗證服務提供者"
 }
 
-Table oauth_integrations {
-  auth_provider int [not null, ref: > auth_providers.id]
+Table oauthIntegrations {
+  authProvider int [not null, ref: > authProviders.id]
   user int [not null, ref: > users.id]
-  external_id varchar [not null, note: "3rd party service id"]
-  access_token varchar [not null, note: "user's access token"]
-  refresh_token varchar [not null, note: "user's refresh token"]
-  expire_at timestamp [not null, note: "expire time of token"]
+  externalId varchar [not null, note: "3rd party service id"]
+  accessToken varchar [not null, note: "user's access token"]
+  refreshToken varchar [not null, note: "user's refresh token"]
+  expireAt timestamp [not null, note: "expire time of token"]
 
   indexes {
-    (auth_provider, user)[unique]
+    (authProvider, user)[unique]
   }
   note: "帳號整合"
 }
@@ -89,51 +89,51 @@ Table oauth_integrations {
 Table events {
   id int [pk, increment]
   title varchar [not null, note: "活動標題"]
-  type varchar [note: "活動類型, 說明這個活動與 Cosplay 的關係，可能值見 event_type"]
+  type varchar [note: "活動類型, 說明這個活動與 Cosplay 的關係，可能值見 eventType"]
   description text [null, note: "活動說明, markdown"]
   link text [not null, note: "活動網站"]
   note: "Cosplay 場次"
 }
 
-enum event_type {
+enum eventType {
   additional [note: "附帶 Cosplay 的活動"]
   specialized [note: "專門給 Cosplay 的活動"]
 }
 
-Ref event_images: events.id <> images.id
+Ref eventImages: events.id <> images.id
 
-Table event_days {
+Table eventDays {
   id int [pk, increment]
   event int [not null, ref: > events.id]
   description text [null, note: "補充說明, markdown"]
-  event_date date [not null, note: "活動日期"]
-  start_time time [not null, note: "活動開始時間"]
-  end_time time [not null, note: "活動結束時間"]
+  eventDate date [not null, note: "活動日期"]
+  startTime time [not null, note: "活動開始時間"]
+  endTime time [not null, note: "活動結束時間"]
   place int [not null, ref: > places.id, note: "活動地點"]
 }
 
-Table event_cosplayer_costume {
+Table eventCosplayerCostume {
   id int [pk, increment]
-  event_day int [not null, ref: > event_days.id]
+  eventDay int [not null, ref: > eventDays.id]
   user int [not null, ref: > users.id]
   character int [not null, ref: > characters.id]
   costume int [not null, ref: > costumes.id]
   comment varchar [null, note: "補充說明"]
 
   indexes {
-     (event_day, user, character, costume) [unique]
+     (eventDay, user, character, costume) [unique]
   }
   note: "場次中會出現的 Cosplayer 跟其時裝"
 }
 
-Table event_photographers {
+Table eventPhotographers {
   id int [pk, increment]
-  event_day int [not null, ref: > event_days.id]
+  eventDay int [not null, ref: > eventDays.id]
   user int [not null, ref: > users.id]
   comment varchar [null, note: "補充說明"]
 
   indexes {
-     (user, event_day) [unique]
+     (user, eventDay) [unique]
   }
   note: "場次中會出現的攝影師"
 }
@@ -154,8 +154,8 @@ Table works {
   note: "Cosplay 的相關作品"
 }
 
-Ref work_images: works.id <> images.id
-Ref character_work: works.id <> characters.id
+Ref workImages: works.id <> images.id
+Ref characterWork: works.id <> characters.id
 
 Table characters {
   id int [pk, increment]
@@ -166,8 +166,8 @@ Table characters {
   note: "Cosplay 的角色"
 }
 
-Ref character_images: characters.id <> images.id
-Ref costume_character: characters.id <> costumes.id
+Ref characterImages: characters.id <> images.id
+Ref costumeCharacter: characters.id <> costumes.id
 
 Table costumes {
   id int [pk, increment]
@@ -178,7 +178,7 @@ Table costumes {
   note: "時裝"
 }
 
-Ref costume_images: costumes.id <> images.id
+Ref costumeImages: costumes.id <> images.id
 
 
 
@@ -187,34 +187,34 @@ Ref costume_images: costumes.id <> images.id
 // Photograph (use flickr)
 Table albums {
   id int [pk, increment]
-  flickr_id varchar [unique, not null, note: "Flickr 上的 album ID"]
-  event_day int [not null, ref: > event_days.id]
+  flickrId varchar [unique, not null, note: "Flickr 上的 album ID"]
+  eventDay int [not null, ref: > eventDays.id]
 
   note: "Flickr 相簿，可以收錄上傳的照片"
 }
 
 Table galleries {
   id int [pk, increment]
-  flickr_id varchar [unique, not null, note: "Flickr 上的 gallery ID"]
-  event_day int [not null, ref: > event_days.id]
+  flickrId varchar [unique, not null, note: "Flickr 上的 gallery ID"]
+  eventDay int [not null, ref: > eventDays.id]
 
   note: "Flickr 展覽館，可以收錄包括非該帳號上傳的照片"
 }
 
 Table photos {
   id int [pk, increment]
-  flickr_id varchar [unique, not null, note: "Flickr 上的 photo ID"]
+  flickrId varchar [unique, not null, note: "Flickr 上的 photo ID"]
   user int [not null, ref: > users.id, note: "攝影師/上傳者"]
   note: "場次中拍到的照片"
 }
 
 // 保留給當場有兩個活動的可能
-Ref photo_event: photos.id <> event_days.id
+Ref photoEvent: photos.id <> eventDays.id
 
-Ref photo_cosplayers: photos.id <> event_cosplayer_costume.id
-Ref photo_likes: photos.id <> users.id
+Ref photoCosplayers: photos.id <> eventCosplayerCostume.id
+Ref photoLikes: photos.id <> users.id
 
-Table photo_cosplayer_recommendations {
+Table photoCosplayerRecommendations {
   id int [pk, increment]
   photo int [not null, ref: > photos.id, note: "在哪張照片被 tag"]
   user int [not null, ref: > users.id, note: "被 Tag 的使用者"]
@@ -225,7 +225,7 @@ Table photo_cosplayer_recommendations {
   note: "一般使用者在照片上標記人（建議誰可能是相中人）"
 }
 
-Ref photo_cosplayer_recommended_by: photo_cosplayer_recommendations.id <> users.id
+Ref photoCosplayerRecommendedBy: photoCosplayerRecommendations.id <> users.id
 
 
 
@@ -235,6 +235,6 @@ Ref photo_cosplayer_recommended_by: photo_cosplayer_recommendations.id <> users.
 Table images {
   id int [pk, increment]
   uploader int [not null, ref: > users.id, note: "上傳者"]
-  imgur_id varchar [not null, note: "Imgur 圖片 ID"]
+  imgurId varchar [not null, note: "Imgur 圖片 ID"]
   note: "圖片，用於作品、角色的敘述圖（非照片）"
 }
