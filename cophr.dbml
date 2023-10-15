@@ -64,12 +64,13 @@ Table authProviders {
 }
 
 Table oauthIntegrations {
+  id int [pk, increment]
   authProvider int [not null, ref: > authProviders.id]
   user int [not null, ref: > users.id]
   externalId varchar [not null, note: "3rd party service id"]
-  accessToken varchar [not null, note: "user's access token"]
-  refreshToken varchar [not null, note: "user's refresh token"]
-  expireAt timestamp [not null, note: "expire time of token"]
+  accessToken varchar [null, note: "user's access token"]
+  refreshToken varchar [null, note: "user's refresh token"]
+  expireAt timestamp [null, note: "expire time of token"]
 
   indexes {
     (authProvider, user)[unique]
