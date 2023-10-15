@@ -59,10 +59,6 @@ Table userSocialMedia {
 Table authProviders {
   id int [pk, increment]
   title varchar [not null]
-  clientId varchar [not null, note: "oauth client id"]
-  clientSecret varchar [not null, note: "oauth client secret"]
-  scope varchar [null, note: "oauth scope"]
-  redirectUri varchar [not null, note: "oauth redirect uri"]
   canLogin boolean [not null, note: "是否可以透過這個登入"]
   note: "驗證服務提供者"
 }
