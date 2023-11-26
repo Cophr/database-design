@@ -86,7 +86,7 @@ Table oauth_integrations {
 Table events {
   id int [pk, increment]
   title varchar [not null, note: "活動標題"]
-  type varchar [note: "活動類型, 說明這個活動與 Cosplay 的關係，可能值見 event_type"]
+  type event_type [note: "活動類型, 說明這個活動與 Cosplay 的關係，可能值見 event_type"]
   description text [null, note: "活動說明, markdown"]
   link text [not null, note: "活動網站"]
   note: "Cosplay 場次"
