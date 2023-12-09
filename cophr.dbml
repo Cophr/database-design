@@ -25,6 +25,7 @@ Table users {
 Table user_follows {
   user int [pk, ref: > users.id]
   target int [pk, ref: > users.id]
+  createdAt timestamp [not null, default: `now()`]
 
   note: "使用者追蹤的人"
 }
