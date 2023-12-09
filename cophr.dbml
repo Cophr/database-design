@@ -22,6 +22,13 @@ Table users {
   note: "使用者基本資料"
 }
 
+Table user_follows {
+  user int [pk, ref: > users.id]
+  target int [pk, ref: > users.id]
+
+  note: "使用者追蹤的人"
+}
+
 Table user_profile_page {
   user int [not null, ref: > users.id]
   settings JSON [not null, note: "個人頁面相關設定，JSON 格式原始資料"]
