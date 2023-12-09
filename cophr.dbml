@@ -16,8 +16,8 @@ Table users {
   id int [pk, increment]
   email varchar(256) [unique, not null, note: "用作登入等用途之信箱"]
   name varchar [not null, note: "顯示名"]
-  account varchar [unique, not null, note: "帳號"]
-  password varchar [null, note: "密碼"]
+  account varchar(30) [unique, not null, note: "帳號"]
+  password char(60) [null, note: "密碼"]
   createdAt timestamp [not null, default: `now()`]
   note: "使用者基本資料"
 }
